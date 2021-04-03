@@ -29,7 +29,7 @@ const check_availability = () => {
     if (not_available_msg)
         return {"avail": false, "msg": not_available_msg.textContent}
     else
-        return {"avail": true, "msg": "No-times-available-message is not found."}
+        return {"avail": true, "msg": "*No-times-available-message is not found.*"}
 }
 
 const click_on_more_dates = async (page) => {
