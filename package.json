@@ -1,0 +1,15 @@
+{
+  "name": "vacnotify",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Daichi Fujiki",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^8.0.0",
+    "requests": "^0.3.0"
+  }
+}
