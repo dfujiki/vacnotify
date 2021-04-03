@@ -14,7 +14,11 @@ const notify = async (msg) => {
         {json: {text: msg}},
         (error, response, body) => {
             if (!error && response.statusCode == 200) {
-                console.log("Notification sent to webhook");
+                console.log("Notification sent to webhook")
+                return true
+            } else {
+                console.log(error)
+                return false
             }
         }
     )
@@ -55,6 +59,7 @@ const sleep = async (sec) => new Promise((resolve) => setTimeout(resolve, sec*10
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
     const url = 'https://wchdappointmentmaker.as.me/schedule.php?calendarID=5287527#'
+    let notification_sent = false
 
     while (true) {
         try {
@@ -62,8 +67,10 @@ const sleep = async (sec) => new Promise((resolve) => setTimeout(resolve, sec*10
             const results = await scrape(page, url)
             results.forEach((result) => console.log(`\u001b[34m[${new Date()}]\u001b[0m ${result.msg}`))
 
-            if (results.some((result) => result.avail)) {
-                notify(results.map((r) => r.msg).join('\n') + `\n Check ${url}`)
+            if (results.some((result) => result.avail) && !notification_sent) {
+                notification_sent = await notify(results.map((r) => r.msg).join('\n') + `\nCheck ${url}`)
+            } else {
+                notification_sent = false
             }
         } catch (e) {
             console.log(`\u001b[34m[${new Date()}]\u001b[0m Error: ${e}`)
