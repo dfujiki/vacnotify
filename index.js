@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer')
-const request = require('request')
+const request = require('request-promise-native')
+const os = require("os")
 
 const NUM_MONTHS = 4
 const SCRAPE_FREQUENCY_SEC = 60     // Check every n sec. Too frequent scraping would blacklist your IP address by the server (it's a typical DDoS protection scheme). 
@@ -11,17 +12,14 @@ const notify = async (msg) => {
 
     return request.post(
         'https://chat.googleapis.com/v1/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-        {json: {text: msg}},
-        (error, response, body) => {
-            if (!error && response.statusCode == 200) {
-                console.log("Notification sent to webhook")
-                return true
-            } else {
-                console.log(error)
-                return false
-            }
-        }
-    )
+        {json: {text: msg}}
+    ).then(() => {
+        console.log("Notification sent to webhook")
+        return true
+    }).catch((err) => {
+        console.log(err.message)
+        return false
+    })
 }
 
 const check_availability = () => {
@@ -60,6 +58,9 @@ const sleep = async (sec) => new Promise((resolve) => setTimeout(resolve, sec*10
     const page = await browser.newPage()
     const url = 'https://wchdappointmentmaker.as.me/schedule.php?calendarID=5287527#'
     let notification_sent = false
+
+    if (!await notify("vacnotify running on host " + os.hostname()))
+        throw new Error('Failed to send notification. Check settings.')
 
     while (true) {
         try {
