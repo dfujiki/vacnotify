@@ -67,8 +67,9 @@ const sleep = async (sec) => new Promise((resolve) => setTimeout(resolve, sec*10
             const results = await scrape(page, url)
             results.forEach((result) => console.log(`\u001b[34m[${new Date()}]\u001b[0m ${result.msg}`))
 
-            if (results.some((result) => result.avail) && !notification_sent) {
-                notification_sent = await notify(results.map((r) => r.msg).join('\n') + `\nCheck ${url}`)
+            if (results.some((result) => result.avail)) {
+                if (!notification_sent)
+                    notification_sent = await notify(results.map((r) => r.msg).join('\n') + `\nCheck ${url}`)
             } else {
                 notification_sent = false
             }
